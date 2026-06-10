@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Event Networking Graph (v1)
 
-## Getting Started
+Mobile-first, no-login web app for events. Attendees scan a QR, fill a short
+self-declared card (with a self-service photo), and appear in real time as nodes in a
+force-directed graph — visible both on their phone and on the projector screen. The one
+hypothesis this MVP validates: **how many people actually fill the "cosa cerco stasera"
+field.**
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Next.js 16** (App Router) + **TypeScript** + **Tailwind v4** + **shadcn/ui**
+- **Supabase**: Postgres + Realtime + Storage
+- **Graph**: `react-force-graph-2d` (dynamic, client-only)
+- No participant auth — identity is a `session_token` in `localStorage`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Surfaces
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Purpose |
+| --- | --- |
+| `/` | Landing → link to host |
+| `/host` | Create an event, get QR + projector link, moderate cards |
+| `/e/[slug]` | Participant phone view: live graph + join form + tap-to-open card |
+| `/e/[slug]/screen` | Read-only projector view: fullscreen graph, `PERSONE LIVE · N`, entrance spotlight |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. Create a Supabase project and apply the schema. See
+   [`supabase/README.md`](supabase/README.md) for the full guide (migration, RLS,
+   storage bucket, and the 48h `pg_cron` auto-purge job).
+2. Create `.env.local`:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+   SUPABASE_SERVICE_ROLE_KEY=<service-role-key>   # server-only
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Install and run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   pnpm install
+   pnpm dev
+   ```
 
-## Deploy on Vercel
+4. Open `/host`, create an event, then open the participant link on a phone and the
+   projector link on a big screen.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Architecture notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Writes are server-side.** All inserts/updates/moderation go through Next.js server
+  actions ([`app/e/[slug]/actions.ts`](app/e/%5Bslug%5D/actions.ts),
+  [`app/host/actions.ts`](app/host/actions.ts)) using the **service role** key, which
+  enforce `session_token` ownership and mandatory consent. The browser only ever uses the
+  **anon** key, for reads + Realtime.
+- **Edges are pure tag string-match** (v1) — built in [`lib/graph.ts`](lib/graph.ts).
+  Two attendees sharing ≥1 tag get a thin edge. This is isolated so v1.1 can swap in
+  semantic similarity without touching the UI.
+- **Tags/roles config** lives in one editable file:
+  [`lib/config/tags.ts`](lib/config/tags.ts).
+- **Privacy**: only first-party self-declared data, mandatory consent before submit,
+  cards visible only within the event page, no external enrichment, 48h auto-purge.
