@@ -48,7 +48,7 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
           )}
         </div>
         <div className="min-w-0">
-          <h2 className="truncate text-lg font-semibold text-white">{attendee.name}</h2>
+          <h2 className="truncate text-lg font-semibold text-[#ECF8EF]">{attendee.name}</h2>
           {attendee.role && (
             <span className="text-sm font-medium" style={{ color }}>
               {attendee.role}
@@ -62,7 +62,7 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
           {attendee.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-2.5 py-0.5 text-xs text-cyan-300"
+              className="rounded-full border border-[#7CFF8A]/40 bg-[#7CFF8A]/10 px-2.5 py-0.5 text-xs text-[#7CFF8A]"
             >
               {tag}
             </span>
@@ -83,7 +83,7 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-cyan-300 underline-offset-2 hover:underline"
+              className="inline-flex items-center gap-1.5 text-[#7CFF8A] underline-offset-2 hover:underline"
             >
               {attendee.contact}
               <ExternalLink className="size-3.5" />
@@ -98,7 +98,7 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
         <Button
           variant="outline"
           onClick={onEdit}
-          className="mt-1 w-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+          className="mt-1 w-full border-[#ABD3B6]/15 bg-[#143222]/60 text-[#ECF8EF] hover:bg-[#143222]"
         >
           <Pencil className="size-4" />
           Edit your profile
@@ -111,8 +111,8 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs uppercase tracking-wide text-white/40">{label}</span>
-      <p className="text-sm leading-relaxed whitespace-pre-wrap text-white/85">{children}</p>
+      <span className="text-xs uppercase tracking-wide text-[#9BB7A3]">{label}</span>
+      <p className="text-sm leading-relaxed whitespace-pre-wrap text-[#ECF8EF]/85">{children}</p>
     </div>
   );
 }

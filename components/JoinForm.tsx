@@ -24,16 +24,24 @@ type JoinFormProps = {
   onDone: (attendee: Attendee) => void;
 };
 
+type FormErrors = {
+  name?: string;
+  lookingFor?: string;
+  role?: string;
+  tags?: string;
+};
+
 export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormProps) {
   const [name, setName] = useState(initial?.name ?? "");
   const [building, setBuilding] = useState(initial?.building ?? "");
   const [lookingFor, setLookingFor] = useState(initial?.looking_for ?? "");
-  const [contact, setContact] = useState(initial?.contact ?? "");
+  const [contact] = useState(initial?.contact ?? "");
   const [role, setRole] = useState<string>(initial?.role ?? "");
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
   const [consent, setConsent] = useState(mode === "edit");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(initial?.photo_url ?? null);
+  const [errors, setErrors] = useState<FormErrors>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
 
@@ -56,10 +64,20 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
   }
 
   function submit() {
-    if (!name.trim()) {
-      toast.error("Name is required.");
+    const nextErrors: FormErrors = {};
+    if (!name.trim()) nextErrors.name = "Name is required.";
+    if (!lookingFor.trim()) {
+      nextErrors.lookingFor = "Tell people what you are looking for tonight.";
+    }
+    if (!role) nextErrors.role = "Choose a role.";
+    if (tags.length === 0) nextErrors.tags = "Choose at least one interest.";
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      toast.error("Please complete the required fields.");
       return;
     }
+
     if (mode === "join" && !consent) {
       toast.error("You need to accept the consent notice to join.");
       return;
@@ -95,7 +113,7 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="relative flex size-24 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-white/40 transition-colors hover:border-cyan-400/60"
+          className="relative flex size-24 items-center justify-center overflow-hidden rounded-full border border-[#ABD3B6]/15 bg-[#143222]/60 text-[#9BB7A3] transition-colors hover:border-[#7CFF8A]/60"
         >
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -112,22 +130,32 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
           className="hidden"
           onChange={onPickPhoto}
         />
-        <span className="text-xs text-white/40">Take a selfie or upload a photo</span>
+        <span className="text-xs text-[#9BB7A3]">Take a selfie or upload a photo</span>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="name">Who are you?</Label>
+        <Label htmlFor="name">
+          Who are you? <Required />
+        </Label>
         <Input
           id="name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setErrors((prev) => ({ ...prev, name: undefined }));
+          }}
           placeholder="Your name"
           maxLength={80}
+          aria-invalid={!!errors.name}
+          className={errors.name ? "border-red-400/70" : undefined}
         />
+        {errors.name && <FieldError>{errors.name}</FieldError>}
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="building">What are you building?</Label>
+        <Label htmlFor="building">
+          What are you building? <span className="text-[#9BB7A3]">(optional)</span>
+        </Label>
         <Textarea
           id="building"
           value={building}
@@ -139,30 +167,29 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="looking_for">What are you looking for tonight?</Label>
+        <Label htmlFor="looking_for">
+          What are you looking for tonight? <Required />
+        </Label>
         <Textarea
           id="looking_for"
           value={lookingFor}
-          onChange={(e) => setLookingFor(e.target.value)}
+          onChange={(e) => {
+            setLookingFor(e.target.value);
+            setErrors((prev) => ({ ...prev, lookingFor: undefined }));
+          }}
           placeholder="A cofounder, customers, a job, feedback..."
           rows={2}
           maxLength={280}
+          aria-invalid={!!errors.lookingFor}
+          className={errors.lookingFor ? "border-red-400/70" : undefined}
         />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="contact">How can people contact you?</Label>
-        <Input
-          id="contact"
-          value={contact}
-          onChange={(e) => setContact(e.target.value)}
-          placeholder="LinkedIn, website, email, handle..."
-          maxLength={200}
-        />
+        {errors.lookingFor && <FieldError>{errors.lookingFor}</FieldError>}
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Role</Label>
+        <Label>
+          Role <Required />
+        </Label>
         <div className="flex flex-wrap gap-2">
           {ROLES.map((r) => {
             const active = role === r;
@@ -170,13 +197,16 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
               <button
                 key={r}
                 type="button"
-                onClick={() => setRole(active ? "" : r)}
+                onClick={() => {
+                  setRole(active ? "" : r);
+                  setErrors((prev) => ({ ...prev, role: undefined }));
+                }}
                 style={active ? { borderColor: roleColor(r), color: roleColor(r) } : undefined}
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-sm transition-colors",
                   active
-                    ? "bg-white/5"
-                    : "border-white/10 text-white/55 hover:border-white/25",
+                    ? "bg-[#143222]/70"
+                    : "border-[#ABD3B6]/15 text-[#9BB7A3] hover:border-[#ABD3B6]/30",
                 )}
               >
                 {r}
@@ -184,11 +214,12 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
             );
           })}
         </div>
+        {errors.role && <FieldError>{errors.role}</FieldError>}
       </div>
 
       <div className="flex flex-col gap-2">
         <Label>
-          Interests <span className="text-white/40">(max {MAX_TAGS})</span>
+          Interests <Required /> <span className="text-[#9BB7A3]">(max {MAX_TAGS})</span>
         </Label>
         <div className="flex flex-wrap gap-2">
           {INTEREST_TAGS.map((tag) => {
@@ -197,12 +228,15 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
               <button
                 key={tag}
                 type="button"
-                onClick={() => toggleTag(tag)}
+                onClick={() => {
+                  toggleTag(tag);
+                  setErrors((prev) => ({ ...prev, tags: undefined }));
+                }}
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-sm transition-colors",
                   active
-                    ? "border-cyan-400/70 bg-cyan-400/10 text-cyan-300"
-                    : "border-white/10 text-white/55 hover:border-white/25",
+                    ? "border-[#7CFF8A]/70 bg-[#7CFF8A]/10 text-[#7CFF8A]"
+                    : "border-[#ABD3B6]/15 text-[#9BB7A3] hover:border-[#ABD3B6]/30",
                 )}
               >
                 {tag}
@@ -210,27 +244,36 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
             );
           })}
         </div>
+        {errors.tags && <FieldError>{errors.tags}</FieldError>}
       </div>
 
       {mode === "join" && (
-        <label className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/5 p-3">
+        <label className="flex items-start gap-3 rounded-lg border border-[#ABD3B6]/15 bg-[#143222]/55 p-3">
           <Checkbox
             checked={consent}
             onCheckedChange={(v) => setConsent(v === true)}
             className="mt-0.5"
           />
-          <span className="text-xs leading-relaxed text-white/65">{CONSENT_TEXT}</span>
+          <span className="text-xs leading-relaxed text-[#9BB7A3]">{CONSENT_TEXT}</span>
         </label>
       )}
 
       <Button
         onClick={submit}
         disabled={pending || (mode === "join" && !consent)}
-        className="h-12 w-full bg-cyan-400 text-base font-semibold text-black hover:bg-cyan-300"
+        className="h-12 w-full bg-[#7CFF8A] text-base font-semibold text-[#06110D] hover:bg-[#A7FFAE]"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
         {mode === "join" ? "Join the graph" : "Save changes"}
       </Button>
     </div>
   );
+}
+
+function Required() {
+  return <span className="text-[#7CFF8A]">*</span>;
+}
+
+function FieldError({ children }: { children: React.ReactNode }) {
+  return <p className="text-xs text-red-300">{children}</p>;
 }

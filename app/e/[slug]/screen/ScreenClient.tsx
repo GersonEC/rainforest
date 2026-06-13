@@ -117,15 +117,22 @@ export default function ScreenClient({
   }, []);
 
   const spotlightColor = useMemo(
-    () => (spotlight ? roleColor(spotlight.role) : "#00e5ff"),
+    () => (spotlight ? roleColor(spotlight.role) : "#7CFF8A"),
     [spotlight],
   );
 
   return (
-    <div className="relative h-dvh w-screen overflow-hidden bg-[#04060c] text-white">
+    <div className="relative h-dvh w-screen overflow-hidden bg-[#06110D] text-[#ECF8EF]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-1/4 -top-1/4 size-[70%] rounded-full bg-cyan-500/12 blur-[160px]" />
-        <div className="absolute -right-1/4 -bottom-1/4 size-[70%] rounded-full bg-fuchsia-500/12 blur-[160px]" />
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/rainforest-graph-bg.png')" }}
+        />
+        <div className="absolute inset-0 bg-[#06110D]/70" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(6,17,13,0.18),rgba(6,17,13,0.9)_72%)]" />
+        <div className="absolute -left-1/4 -top-1/4 size-[70%] rounded-full bg-[#1FA463]/22 blur-[160px]" />
+        <div className="absolute -right-1/4 -bottom-1/4 size-[70%] rounded-full bg-[#5EEAD4]/12 blur-[160px]" />
+        <div className="absolute left-1/2 bottom-12 size-40 rounded-full bg-[#F2C94C]/10 blur-[100px]" />
       </div>
 
       {/* Fullscreen graph (read-only) */}
@@ -142,22 +149,22 @@ export default function ScreenClient({
 
       {/* Event name */}
       <div className="absolute left-10 top-8 z-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-white/90">{event.name}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-[#ECF8EF]/90">{event.name}</h1>
       </div>
 
       {/* Live counter */}
       <div className="absolute right-10 top-8 z-10 text-right">
-        <div className="text-sm font-medium uppercase tracking-[0.3em] text-cyan-300/80">
+        <div className="text-sm font-medium uppercase tracking-[0.3em] text-[#7CFF8A]/80">
           Live People
         </div>
-        <div className="text-7xl font-bold leading-none text-white tabular-nums [text-shadow:0_0_40px_rgba(0,229,255,0.55)]">
+        <div className="text-7xl font-bold leading-none text-[#ECF8EF] tabular-nums [text-shadow:0_0_40px_rgba(124,255,138,0.55)]">
           {attendees.length}
         </div>
       </div>
 
       {attendees.length === 0 && (
         <div className="absolute inset-0 z-10 flex items-center justify-center">
-          <p className="text-xl text-white/40">Waiting for the first participants...</p>
+          <p className="text-xl text-[#9BB7A3]/70">Waiting for the first participants...</p>
         </div>
       )}
 
@@ -165,7 +172,7 @@ export default function ScreenClient({
       {spotlight && (
         <div
           key={spotlight.id}
-          className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 rounded-2xl border bg-black/40 px-6 py-4 backdrop-blur-md animate-in fade-in slide-in-from-bottom-6 duration-500"
+          className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 rounded-2xl border bg-[#0F241A]/75 px-6 py-4 backdrop-blur-md animate-in fade-in slide-in-from-bottom-6 duration-500"
           style={{ borderColor: spotlightColor, boxShadow: `0 0 50px -10px ${spotlightColor}` }}
         >
           <div
@@ -192,9 +199,9 @@ export default function ScreenClient({
             <div className="text-xs uppercase tracking-widest" style={{ color: spotlightColor }}>
               Just joined
             </div>
-            <div className="text-xl font-semibold text-white">{spotlight.name}</div>
+            <div className="text-xl font-semibold text-[#ECF8EF]">{spotlight.name}</div>
             {spotlight.looking_for && (
-              <div className="max-w-md truncate text-sm text-white/60">
+              <div className="max-w-md truncate text-sm text-[#9BB7A3]">
                 Looking for: {spotlight.looking_for}
               </div>
             )}

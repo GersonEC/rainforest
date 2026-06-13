@@ -1,21 +1,27 @@
 // Predefined roles and interest tags for v1. Not editable by users.
 // Keep this file as the single source of truth — change here to update everywhere.
 
-export const ROLES = ["Founder", "Builder", "Investor", "Curious"] as const;
+export const ROLES = ["Builder", "Investor", "Curious", "Community Manager"] as const;
 export type Role = (typeof ROLES)[number];
 
 export const INTEREST_TAGS = [
   "AI",
-  "Fintech",
-  "Dev",
-  "Design",
-  "Growth",
-  "Hardware",
+  "EdTech",
+  "FinTech",
+  "HealthTech",
+  "ClimateTech",
+  "DevTools",
+  "B2B SaaS",
+  "Consumer",
+  "Marketplace",
+  "E-commerce",
+  "Creator Economy",
+  "HR/Future of Work",
+  "Cybersecurity",
   "Web3",
-  "Looking for cofounder",
-  "Looking for work",
-  "Hiring",
-  "Looking for users/feedback",
+  "Hardware/IoT",
+  "Social Impact",
+  "Other",
 ] as const;
 export type InterestTag = (typeof INTEREST_TAGS)[number];
 
@@ -24,13 +30,13 @@ export const MAX_TAGS = 3;
 
 // Stable color per role, used to tint nodes in the graph (dark/electric palette).
 export const ROLE_COLORS: Record<Role, string> = {
-  Founder: "#ff4d8d", // electric pink
-  Builder: "#00e5ff", // electric cyan
-  Investor: "#b388ff", // electric violet
-  Curious: "#7CFFB2", // electric green
+  Builder: "#7CFF8A", // bioluminescent leaf
+  Investor: "#F2C94C", // firefly amber
+  Curious: "#5EEAD4", // rainforest water
+  "Community Manager": "#C084FC", // orchid
 };
 
-export const DEFAULT_NODE_COLOR = "#00e5ff";
+export const DEFAULT_NODE_COLOR = "#7CFF8A";
 
 export function roleColor(role: string | null | undefined): string {
   if (role && role in ROLE_COLORS) {

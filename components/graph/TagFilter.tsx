@@ -25,15 +25,15 @@ export default function TagFilter({ filter, onChange }: TagFilterProps) {
             className={cn(
               "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
               active
-                ? "bg-white/5"
-                : "border-white/10 text-white/55 hover:border-white/25 hover:text-white/80",
+                ? "bg-[#143222]/70"
+                : "border-[#ABD3B6]/15 text-[#9BB7A3] hover:border-[#ABD3B6]/30 hover:text-[#ECF8EF]/80",
             )}
           >
             {role}
           </button>
         );
       })}
-      <span className="mx-0.5 shrink-0 self-center text-white/15">|</span>
+      <span className="mx-0.5 shrink-0 self-center text-[#ABD3B6]/20">|</span>
       {INTEREST_TAGS.map((tag) => {
         const active = filter.tag === tag;
         return (
@@ -44,8 +44,8 @@ export default function TagFilter({ filter, onChange }: TagFilterProps) {
             className={cn(
               "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
               active
-                ? "border-cyan-400/70 bg-cyan-400/10 text-cyan-300"
-                : "border-white/10 text-white/55 hover:border-white/25 hover:text-white/80",
+                ? "border-[#7CFF8A]/70 bg-[#7CFF8A]/10 text-[#7CFF8A]"
+                : "border-[#ABD3B6]/15 text-[#9BB7A3] hover:border-[#ABD3B6]/30 hover:text-[#ECF8EF]/80",
             )}
           >
             {tag}

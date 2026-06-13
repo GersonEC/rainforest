@@ -151,7 +151,7 @@ export default function EventClient({
     QRCode.toDataURL(joinUrl, {
       width: 220,
       margin: 1,
-      color: { dark: "#05070d", light: "#ffffff" },
+      color: { dark: "#06110D", light: "#ffffff" },
     })
       .then(setQr)
       .catch(() => setQr(null));
@@ -189,15 +189,15 @@ export default function EventClient({
   }
 
   return (
-    <div className="relative flex h-dvh flex-col overflow-hidden bg-[#05070d] text-white">
-      <BackgroundGlow />
+    <div className="relative flex h-dvh flex-col overflow-hidden bg-[#06110D] text-[#ECF8EF]">
+      <RainforestBackground />
 
       {/* Top bar */}
       <header className="relative z-10 flex flex-col gap-2 px-4 pt-4">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <h1 className="truncate text-base font-semibold">{event.name}</h1>
-            <p className="text-xs text-cyan-300/80">
+            <p className="text-xs text-[#7CFF8A]/80">
               LIVE PEOPLE · {attendees.length}
             </p>
           </div>
@@ -217,7 +217,7 @@ export default function EventClient({
         />
         {attendees.length === 0 && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
-            <p className="text-sm text-white/40">
+            <p className="text-sm text-[#9BB7A3]/70">
               No one is in the graph yet. Be the first to join.
             </p>
           </div>
@@ -225,14 +225,14 @@ export default function EventClient({
       </main>
 
       {qr && (
-        <div className="absolute right-4 bottom-20 z-10 hidden flex-col items-center gap-2 rounded-2xl border border-white/10 bg-black/45 p-3 shadow-[0_0_35px_-10px_rgba(0,229,255,0.8)] backdrop-blur-md sm:flex">
+        <div className="absolute right-4 bottom-20 z-10 hidden flex-col items-center gap-2 rounded-2xl border border-[#ABD3B6]/15 bg-[#0F241A]/75 p-3 shadow-[0_0_35px_-10px_rgba(124,255,138,0.8)] backdrop-blur-md sm:flex">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qr}
             alt={`QR to join ${event.name}`}
             className="size-24 rounded-lg bg-white p-1"
           />
-          <span className="text-center text-[11px] font-medium uppercase tracking-wide text-cyan-300/80">
+          <span className="text-center text-[11px] font-medium uppercase tracking-wide text-[#7CFF8A]/80">
             Join the graph
           </span>
         </div>
@@ -243,7 +243,7 @@ export default function EventClient({
         {ownAttendee ? (
           <Button
             onClick={() => setSheet({ type: "detail", id: ownAttendee.id })}
-            className="h-13 w-full border border-white/15 bg-white/5 text-base font-semibold text-white hover:bg-white/10"
+            className="h-13 w-full border border-[#ABD3B6]/15 bg-[#0F241A]/75 text-base font-semibold text-[#ECF8EF] hover:bg-[#143222]"
           >
             <UserRound className="size-5" />
             Your profile
@@ -251,7 +251,7 @@ export default function EventClient({
         ) : (
           <Button
             onClick={() => setSheet({ type: "join" })}
-            className="h-13 w-full bg-cyan-400 text-base font-semibold text-black shadow-[0_0_30px_-6px_rgba(0,229,255,0.8)] hover:bg-cyan-300"
+            className="h-13 w-full bg-[#7CFF8A] text-base font-semibold text-[#06110D] shadow-[0_0_30px_-6px_rgba(124,255,138,0.8)] hover:bg-[#A7FFAE]"
           >
             <Plus className="size-5" />
             Join the graph
@@ -266,10 +266,10 @@ export default function EventClient({
       >
         <SheetContent
           side="bottom"
-          className="max-h-[92dvh] overflow-y-auto border-white/10 bg-[#0a0e18] text-white"
+          className="max-h-[92dvh] overflow-y-auto border-[#ABD3B6]/15 bg-[#0F241A] text-[#ECF8EF]"
         >
           <SheetHeader>
-            <SheetTitle className="text-white">Join the graph</SheetTitle>
+            <SheetTitle className="text-[#ECF8EF]">Join the graph</SheetTitle>
             <SheetDescription>Fill out your profile. You will appear in the graph right away.</SheetDescription>
           </SheetHeader>
           <div className="px-4 pb-6">
@@ -285,10 +285,10 @@ export default function EventClient({
       >
         <SheetContent
           side="bottom"
-          className="max-h-[92dvh] overflow-y-auto border-white/10 bg-[#0a0e18] text-white"
+          className="max-h-[92dvh] overflow-y-auto border-[#ABD3B6]/15 bg-[#0F241A] text-[#ECF8EF]"
         >
           <SheetHeader>
-            <SheetTitle className="text-white">Edit your profile</SheetTitle>
+            <SheetTitle className="text-[#ECF8EF]">Edit your profile</SheetTitle>
           </SheetHeader>
           <div className="px-4 pb-6">
             {ownAttendee && (
@@ -310,7 +310,7 @@ export default function EventClient({
       >
         <SheetContent
           side="bottom"
-          className="max-h-[85dvh] overflow-y-auto border-white/10 bg-[#0a0e18] text-white"
+          className="max-h-[85dvh] overflow-y-auto border-[#ABD3B6]/15 bg-[#0F241A] text-[#ECF8EF]"
         >
           <SheetHeader>
             <SheetTitle className="sr-only">Participant profile</SheetTitle>
@@ -330,11 +330,18 @@ export default function EventClient({
   );
 }
 
-function BackgroundGlow() {
+function RainforestBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0">
-      <div className="absolute -left-1/4 top-0 size-[60%] rounded-full bg-cyan-500/10 blur-[120px]" />
-      <div className="absolute -right-1/4 bottom-0 size-[55%] rounded-full bg-fuchsia-500/10 blur-[120px]" />
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-22 saturate-125"
+        style={{ backgroundImage: "url('/images/rainforest-graph-bg.png')" }}
+      />
+      <div className="absolute inset-0 bg-[#06110D]/72" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(6,17,13,0.25),rgba(6,17,13,0.92)_70%)]" />
+      <div className="absolute -left-1/4 top-0 size-[60%] rounded-full bg-[#1FA463]/20 blur-[120px]" />
+      <div className="absolute -right-1/4 bottom-0 size-[55%] rounded-full bg-[#5EEAD4]/10 blur-[120px]" />
+      <div className="absolute bottom-12 left-1/3 h-20 w-20 rounded-full bg-[#F2C94C]/10 blur-[70px]" />
     </div>
   );
 }

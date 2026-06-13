@@ -146,7 +146,7 @@ export default function ForceGraph(props: ForceGraphProps) {
       // Base disc.
       ctx.beginPath();
       ctx.arc(x, y, r, 0, 2 * Math.PI);
-      ctx.fillStyle = "#0b0f1a";
+      ctx.fillStyle = "#0A1A13";
       ctx.fill();
       ctx.shadowBlur = 0;
 
@@ -184,7 +184,7 @@ export default function ForceGraph(props: ForceGraphProps) {
       if (!dimmed && (globalScale > 1.1 || big || isSelected || isSpotlight)) {
         const fontSize = (big ? 5 : 3.5) + 1;
         ctx.font = `${fontSize}px sans-serif`;
-        ctx.fillStyle = "rgba(235,240,255,0.92)";
+        ctx.fillStyle = "rgba(236,248,239,0.92)";
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
         ctx.fillText(node.name, x, y + r + 1.5);
@@ -213,9 +213,9 @@ export default function ForceGraph(props: ForceGraphProps) {
       const t = typeof link.target === "object" ? link.target.id : link.target;
       if (hasSelection) {
         const lit = highlightNodeIds.has(s as string) && highlightNodeIds.has(t as string);
-        return lit ? "rgba(0,229,255,0.55)" : "rgba(120,140,180,0.05)";
+        return lit ? "rgba(124,255,138,0.58)" : "rgba(124,160,130,0.06)";
       }
-      return "rgba(120,160,220,0.18)";
+      return "rgba(124,255,138,0.18)";
     },
     [hasSelection, highlightNodeIds],
   );

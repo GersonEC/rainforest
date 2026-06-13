@@ -85,7 +85,12 @@ export async function joinEvent(formData: FormData): Promise<JoinResult> {
   if (!f.eventId || !f.sessionToken) return { ok: false, error: "Invalid session." };
   if (!f.name) return { ok: false, error: "Name is required." };
   if (!f.consent) return { ok: false, error: "Consent is required." };
-  if (f.role && !isValidRole(f.role)) return { ok: false, error: "Invalid role." };
+  if (!f.looking_for) return { ok: false, error: "Looking for is required." };
+  if (!f.role) return { ok: false, error: "Role is required." };
+  if (!isValidRole(f.role)) return { ok: false, error: "Invalid role." };
+  if (f.tags.length === 0) {
+    return { ok: false, error: "Choose at least one interest." };
+  }
 
   const admin = getAdminClient();
 
@@ -118,7 +123,12 @@ export async function updateOwnAttendee(formData: FormData): Promise<JoinResult>
 
   if (!f.eventId || !f.sessionToken) return { ok: false, error: "Invalid session." };
   if (!f.name) return { ok: false, error: "Name is required." };
-  if (f.role && !isValidRole(f.role)) return { ok: false, error: "Invalid role." };
+  if (!f.looking_for) return { ok: false, error: "Looking for is required." };
+  if (!f.role) return { ok: false, error: "Role is required." };
+  if (!isValidRole(f.role)) return { ok: false, error: "Invalid role." };
+  if (f.tags.length === 0) {
+    return { ok: false, error: "Choose at least one interest." };
+  }
 
   const admin = getAdminClient();
 

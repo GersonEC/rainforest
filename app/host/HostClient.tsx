@@ -140,16 +140,16 @@ export default function HostClient() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#05070d] px-4 py-10 text-white">
+    <div className="min-h-dvh bg-[#06110D] px-4 py-10 text-[#ECF8EF]">
       <div className="mx-auto flex max-w-2xl flex-col gap-8">
         <div>
           <h1 className="text-2xl font-bold">Create an event</h1>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-sm text-[#9BB7A3]">
             Generate a QR code for participants and a projector link.
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/3 p-5">
+        <div className="flex flex-col gap-4 rounded-2xl border border-[#ABD3B6]/15 bg-[#0F241A]/70 p-5 shadow-[0_0_45px_-30px_rgba(124,255,138,0.7)]">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="event-name">Event name</Label>
             <Input
@@ -161,7 +161,7 @@ export default function HostClient() {
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="event-date">
-              Date and time <span className="text-white/40">(for 48h auto-deletion)</span>
+              Date and time <span className="text-[#9BB7A3]">(for 48h auto-deletion)</span>
             </Label>
             <div className="grid grid-cols-[1fr_7rem] gap-2">
               <Popover>
@@ -170,17 +170,17 @@ export default function HostClient() {
                     id="event-date"
                     variant="outline"
                     className={cn(
-                      "h-10 justify-start border-white/15 bg-white/5 text-left font-normal text-white hover:bg-white/10",
-                      !selectedDate && "text-white/45",
+                      "h-10 justify-start border-[#ABD3B6]/15 bg-[#143222]/60 text-left font-normal text-[#ECF8EF] hover:bg-[#143222]",
+                      !selectedDate && "text-[#9BB7A3]",
                     )}
                   >
-                    <CalendarIcon className="size-4 text-cyan-300" />
+                    <CalendarIcon className="size-4 text-[#7CFF8A]" />
                     {formatDate(selectedDate)}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
                   align="start"
-                  className="w-auto border-white/10 bg-[#0a0e18] p-0 text-white"
+                  className="w-auto border-[#ABD3B6]/15 bg-[#0F241A] p-0 text-[#ECF8EF]"
                 >
                   <Calendar
                     mode="single"
@@ -204,7 +204,7 @@ export default function HostClient() {
           <Button
             onClick={create}
             disabled={pending}
-            className="h-11 bg-cyan-400 font-semibold text-black hover:bg-cyan-300"
+            className="h-11 bg-[#7CFF8A] font-semibold text-[#06110D] hover:bg-[#A7FFAE]"
           >
             {pending && <Loader2 className="size-4 animate-spin" />}
             Create event
@@ -213,7 +213,7 @@ export default function HostClient() {
 
         {events.length > 0 && (
           <div className="flex flex-col gap-4">
-            <h2 className="text-sm font-medium uppercase tracking-wide text-white/40">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-[#9BB7A3]">
               Your events
             </h2>
             {events.map((e) => (
@@ -240,7 +240,7 @@ function EventCard({ event }: { event: HostEvent }) {
     QRCode.toDataURL(joinUrl, {
       width: 320,
       margin: 1,
-      color: { dark: "#000000", light: "#ffffff" },
+      color: { dark: "#06110D", light: "#ffffff" },
     })
       .then((qr) => setLinks({ joinUrl, screenUrl, qr }))
       .catch(() => setLinks({ joinUrl, screenUrl, qr: null }));
@@ -258,11 +258,11 @@ function EventCard({ event }: { event: HostEvent }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/3 p-5">
+    <div className="flex flex-col gap-4 rounded-2xl border border-[#ABD3B6]/15 bg-[#0F241A]/70 p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 className="truncate text-lg font-semibold">{event.name}</h3>
-          <p className="truncate text-xs text-white/40">/{event.slug}</p>
+          <p className="truncate text-xs text-[#9BB7A3]">/{event.slug}</p>
         </div>
         {qr && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -280,17 +280,17 @@ function EventCard({ event }: { event: HostEvent }) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button asChild variant="outline" size="sm" className="border-white/15 bg-white/5 text-white hover:bg-white/10">
+        <Button asChild variant="outline" size="sm" className="border-[#ABD3B6]/15 bg-[#143222]/60 text-[#ECF8EF] hover:bg-[#143222]">
           <a href={joinUrl} target="_blank" rel="noopener noreferrer">Open event</a>
         </Button>
-        <Button asChild variant="outline" size="sm" className="border-white/15 bg-white/5 text-white hover:bg-white/10">
+        <Button asChild variant="outline" size="sm" className="border-[#ABD3B6]/15 bg-[#143222]/60 text-[#ECF8EF] hover:bg-[#143222]">
           <a href={screenUrl} target="_blank" rel="noopener noreferrer">Open projector</a>
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => setShowMod((v) => !v)}
-          className="border-white/15 bg-white/5 text-white hover:bg-white/10"
+          className="border-[#ABD3B6]/15 bg-[#143222]/60 text-[#ECF8EF] hover:bg-[#143222]"
         >
           <ShieldAlert className="size-4" />
           Moderation
@@ -314,16 +314,16 @@ function LinkRow({
   onCopy: (text: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2">
-      <span className="text-cyan-300">{icon}</span>
+    <div className="flex items-center gap-2 rounded-lg border border-[#ABD3B6]/15 bg-[#06110D]/45 px-3 py-2">
+      <span className="text-[#7CFF8A]">{icon}</span>
       <div className="min-w-0 flex-1">
-        <div className="text-[11px] uppercase tracking-wide text-white/35">{label}</div>
-        <div className="truncate text-xs text-white/70">{url}</div>
+        <div className="text-[11px] uppercase tracking-wide text-[#9BB7A3]/70">{label}</div>
+        <div className="truncate text-xs text-[#ECF8EF]/75">{url}</div>
       </div>
       <button
         type="button"
         onClick={() => onCopy(url)}
-        className="shrink-0 rounded-md p-1.5 text-white/50 hover:bg-white/10 hover:text-white"
+        className="shrink-0 rounded-md p-1.5 text-[#9BB7A3] hover:bg-[#143222] hover:text-[#ECF8EF]"
       >
         <Copy className="size-4" />
       </button>
@@ -381,41 +381,41 @@ function Moderation({ event }: { event: HostEvent }) {
   }
 
   return (
-    <div className="mt-1 flex flex-col gap-2 rounded-lg border border-white/10 bg-black/30 p-3">
+    <div className="mt-1 flex flex-col gap-2 rounded-lg border border-[#ABD3B6]/15 bg-[#06110D]/45 p-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-wide text-white/40">
+        <span className="text-xs uppercase tracking-wide text-[#9BB7A3]">
           Participants ({attendees.length})
         </span>
         <button
           type="button"
           onClick={refresh}
-          className="text-xs text-cyan-300 hover:underline"
+          className="text-xs text-[#7CFF8A] hover:underline"
         >
           {loading ? "..." : "Refresh"}
         </button>
       </div>
       {attendees.length === 0 && !loading && (
-        <p className="text-xs text-white/40">No participants yet.</p>
+        <p className="text-xs text-[#9BB7A3]">No participants yet.</p>
       )}
       {attendees.map((a) => (
         <div
           key={a.id}
-          className="flex items-center gap-3 rounded-md border border-white/5 bg-white/2 px-3 py-2"
+          className="flex items-center gap-3 rounded-md border border-[#ABD3B6]/10 bg-[#143222]/35 px-3 py-2"
         >
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm text-white/90">
+            <div className="truncate text-sm text-[#ECF8EF]/90">
               {a.name}
               {a.hidden && <span className="ml-2 text-xs text-amber-400">hidden</span>}
             </div>
             {a.looking_for && (
-              <div className="truncate text-xs text-white/45">{a.looking_for}</div>
+              <div className="truncate text-xs text-[#9BB7A3]">{a.looking_for}</div>
             )}
           </div>
           {a.hidden ? (
             <button
               type="button"
               onClick={() => unhide(a.id)}
-              className="rounded-md p-1.5 text-white/50 hover:bg-white/10 hover:text-white"
+              className="rounded-md p-1.5 text-[#9BB7A3] hover:bg-[#143222] hover:text-[#ECF8EF]"
               title="Restore"
             >
               <Eye className="size-4" />
@@ -424,7 +424,7 @@ function Moderation({ event }: { event: HostEvent }) {
             <button
               type="button"
               onClick={() => act(a.id, "hide")}
-              className="rounded-md p-1.5 text-white/50 hover:bg-white/10 hover:text-white"
+              className="rounded-md p-1.5 text-[#9BB7A3] hover:bg-[#143222] hover:text-[#ECF8EF]"
               title="Hide"
             >
               <EyeOff className="size-4" />
