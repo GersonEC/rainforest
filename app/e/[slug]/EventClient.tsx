@@ -199,6 +199,7 @@ export default function EventClient({
           selectedId={selectedId}
           newNodeIds={newNodeIds}
           interactive
+          showZoomControls
           onNodeClick={(id) => setSheet({ type: "detail", id })}
           onBackgroundClick={() => setSheet(null)}
         />

@@ -6,6 +6,7 @@ import ForceGraph2D, {
   type NodeObject,
   type LinkObject,
 } from "react-force-graph-2d";
+import { Minus, Plus, Scan } from "lucide-react";
 import type { GraphData, GraphNode } from "@/lib/graph";
 import { roleColor } from "@/lib/config/tags";
 
@@ -20,6 +21,7 @@ export type ForceGraphProps = {
   spotlightId: string | null;
   interactive: boolean;
   big: boolean;
+  showZoomControls?: boolean;
   onNodeClick?: (id: string) => void;
   onBackgroundClick?: () => void;
 };
@@ -27,6 +29,11 @@ export type ForceGraphProps = {
 type FGNode = NodeObject & GraphNode;
 
 const ENTRANCE_MS = 1800;
+
+// Clamp the auto-fit so 1-2 people don't get blown up to fill the screen.
+const FIT_MAX_ZOOM = 2.5;
+const ZOOM_MIN = 0.4;
+const ZOOM_MAX = 8;
 
 export default function ForceGraph(props: ForceGraphProps) {
   const {
@@ -40,6 +47,7 @@ export default function ForceGraph(props: ForceGraphProps) {
     spotlightId,
     interactive,
     big,
+    showZoomControls = false,
     onNodeClick,
     onBackgroundClick,
   } = props;
@@ -47,7 +55,14 @@ export default function ForceGraph(props: ForceGraphProps) {
   const fgRef = useRef<ForceGraphMethods | undefined>(undefined);
   const images = useRef<Map<string, HTMLImageElement>>(new Map());
   const entranceAt = useRef<Map<string, number>>(new Map());
-  const didFit = useRef(false);
+  // Once the viewer pans/zooms by hand we stop auto-fitting so we don't fight them.
+  const userHasNavigated = useRef(false);
+  // Becomes true after the first auto-fit settles. Until then we ignore zoom
+  // events so the library's mount-time camera setup isn't mistaken for a gesture.
+  const hasInitialized = useRef(false);
+  // True while we drive the camera ourselves, so onZoom can tell our moves apart
+  // from genuine user gestures.
+  const programmaticZoom = useRef(false);
 
   const baseR = big ? 11 : 7;
 
@@ -71,31 +86,71 @@ export default function ForceGraph(props: ForceGraphProps) {
     }
   }, [newNodeIds]);
 
-  // Looser charge so photo nodes don't overlap; gentle link distance.
+  // Softer charge keeps a handful of disconnected nodes in a tight, centered
+  // cluster instead of flinging them to the corners; gentle link distance.
   useEffect(() => {
     const fg = fgRef.current;
     if (!fg) return;
-    fg.d3Force("charge")?.strength(big ? -160 : -120);
+    fg.d3Force("charge")?.strength(big ? -110 : -90);
     const link = fg.d3Force("link");
     link?.distance?.(big ? 70 : 55);
   }, [big, data]);
 
-  // Fit the graph once it first settles.
-  const handleEngineStop = useCallback(() => {
-    if (didFit.current) return;
-    if (data.nodes.length === 0) return;
-    didFit.current = true;
-    fgRef.current?.zoomToFit(400, big ? 80 : 40);
-  }, [data.nodes.length, big]);
+  // Frame the whole graph, then clamp the zoom so tiny graphs stay readable
+  // rather than filling the viewport. Marked programmatic so onZoom ignores it.
+  const fitView = useCallback(
+    (ms = 400) => {
+      const fg = fgRef.current;
+      if (!fg || data.nodes.length === 0) return;
+      programmaticZoom.current = true;
+      fg.zoomToFit(ms, big ? 80 : 40);
+      window.setTimeout(() => {
+        const current = fgRef.current;
+        if (current && current.zoom() > FIT_MAX_ZOOM) {
+          current.zoom(FIT_MAX_ZOOM, 300);
+        }
+        window.setTimeout(() => {
+          programmaticZoom.current = false;
+          hasInitialized.current = true;
+        }, 350);
+      }, ms + 50);
+    },
+    [data.nodes.length, big],
+  );
 
-  // Re-fit when going from empty to populated.
+  const nodeCount = data.nodes.length;
+
+  // Re-fit whenever people join/leave, unless the viewer has taken control.
   useEffect(() => {
-    if (data.nodes.length > 0 && didFit.current === false) {
-      // allow the engine to place nodes first
-      const t = setTimeout(() => fgRef.current?.zoomToFit(500, big ? 80 : 40), 600);
-      return () => clearTimeout(t);
-    }
-  }, [data.nodes.length, big]);
+    if (nodeCount === 0 || userHasNavigated.current) return;
+    const t = setTimeout(() => fitView(500), 600);
+    return () => clearTimeout(t);
+  }, [nodeCount, fitView]);
+
+  // Fit each time the simulation settles (covers the initial layout too).
+  const handleEngineStop = useCallback(() => {
+    if (nodeCount === 0 || userHasNavigated.current) return;
+    fitView(400);
+  }, [nodeCount, fitView]);
+
+  // Any zoom we didn't trigger ourselves (after the first fit) means the viewer
+  // is driving, so we hand them control and stop auto-fitting.
+  const handleZoom = useCallback(() => {
+    if (!hasInitialized.current) return;
+    if (!programmaticZoom.current) userHasNavigated.current = true;
+  }, []);
+
+  const zoomBy = useCallback((factor: number) => {
+    const fg = fgRef.current;
+    if (!fg) return;
+    const next = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, fg.zoom() * factor));
+    fg.zoom(next, 250);
+  }, []);
+
+  const resetView = useCallback(() => {
+    userHasNavigated.current = false;
+    fitView(500);
+  }, [fitView]);
 
   const drawNode = useCallback(
     (nodeObj: NodeObject, ctx: CanvasRenderingContext2D, globalScale: number) => {
@@ -236,30 +291,69 @@ export default function ForceGraph(props: ForceGraphProps) {
   // Stable cooldown so big projector layouts keep moving slightly.
   const cooldownTicks = useMemo(() => (big ? 200 : 120), [big]);
 
+  const btnClass = big
+    ? "flex size-12 items-center justify-center rounded-xl border border-[#ABD3B6]/15 bg-[#0F241A]/80 text-[#ECF8EF] backdrop-blur-md transition-colors hover:bg-[#143222] active:scale-95"
+    : "flex size-10 items-center justify-center rounded-xl border border-[#ABD3B6]/15 bg-[#0F241A]/80 text-[#ECF8EF] backdrop-blur-md transition-colors hover:bg-[#143222] active:scale-95";
+  const iconSize = big ? "size-5" : "size-4";
+
   return (
-    <ForceGraph2D
-      ref={fgRef as never}
-      graphData={data}
-      width={width}
-      height={height}
-      backgroundColor="rgba(0,0,0,0)"
-      nodeRelSize={baseR}
-      nodeId="id"
-      nodeCanvasObjectMode={() => "replace"}
-      nodeCanvasObject={drawNode}
-      nodePointerAreaPaint={paintPointerArea}
-      linkColor={linkColor}
-      linkWidth={linkWidth}
-      cooldownTicks={cooldownTicks}
-      onEngineStop={handleEngineStop}
-      enableZoomInteraction={interactive}
-      enablePanInteraction={interactive}
-      enableNodeDrag={interactive}
-      enablePointerInteraction={interactive}
-      onNodeClick={interactive ? handleNodeClick : undefined}
-      onBackgroundClick={interactive ? onBackgroundClick : undefined}
-      minZoom={0.4}
-      maxZoom={8}
-    />
+    <div className="relative" style={{ width, height }}>
+      <ForceGraph2D
+        ref={fgRef as never}
+        graphData={data}
+        width={width}
+        height={height}
+        backgroundColor="rgba(0,0,0,0)"
+        nodeRelSize={baseR}
+        nodeId="id"
+        nodeCanvasObjectMode={() => "replace"}
+        nodeCanvasObject={drawNode}
+        nodePointerAreaPaint={paintPointerArea}
+        linkColor={linkColor}
+        linkWidth={linkWidth}
+        cooldownTicks={cooldownTicks}
+        onEngineStop={handleEngineStop}
+        onZoom={handleZoom}
+        enableZoomInteraction
+        enablePanInteraction
+        enableNodeDrag={interactive}
+        enablePointerInteraction={interactive}
+        onNodeClick={interactive ? handleNodeClick : undefined}
+        onBackgroundClick={interactive ? onBackgroundClick : undefined}
+        minZoom={ZOOM_MIN}
+        maxZoom={ZOOM_MAX}
+      />
+
+      {showZoomControls && (
+        <div
+          className={`absolute z-10 flex flex-col gap-2 ${big ? "left-6 bottom-6" : "right-3 bottom-3"}`}
+        >
+          <button
+            type="button"
+            aria-label="Zoom in"
+            onClick={() => zoomBy(1.4)}
+            className={btnClass}
+          >
+            <Plus className={iconSize} />
+          </button>
+          <button
+            type="button"
+            aria-label="Zoom out"
+            onClick={() => zoomBy(1 / 1.4)}
+            className={btnClass}
+          >
+            <Minus className={iconSize} />
+          </button>
+          <button
+            type="button"
+            aria-label="Reset view"
+            onClick={resetView}
+            className={btnClass}
+          >
+            <Scan className={iconSize} />
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

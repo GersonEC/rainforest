@@ -146,6 +146,7 @@ export default function ScreenClient({
           spotlightId={spotlight?.id ?? null}
           interactive={false}
           big
+          showZoomControls
         />
       </div>
 

@@ -19,6 +19,7 @@ export type GraphCanvasProps = {
   spotlightId?: string | null;
   interactive?: boolean;
   big?: boolean;
+  showZoomControls?: boolean;
   onNodeClick?: (id: string) => void;
   onBackgroundClick?: () => void;
 };
@@ -30,6 +31,7 @@ export default function GraphCanvas({
   spotlightId = null,
   interactive = true,
   big = false,
+  showZoomControls = false,
   onNodeClick,
   onBackgroundClick,
 }: GraphCanvasProps) {
@@ -76,6 +78,7 @@ export default function GraphCanvas({
     spotlightId,
     interactive,
     big,
+    showZoomControls,
     onNodeClick,
     onBackgroundClick,
   };
