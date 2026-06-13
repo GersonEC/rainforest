@@ -30,9 +30,11 @@ function mapRow(row: Row): Attendee {
 export default function ScreenClient({
   event,
   initialAttendees,
+  joinQr,
 }: {
   event: PublicEvent;
   initialAttendees: Attendee[];
+  joinQr: string | null;
 }) {
   const [attendees, setAttendees] = useState<Attendee[]>(initialAttendees);
   const [newNodeIds, setNewNodeIds] = useState<Set<string>>(new Set());
@@ -126,7 +128,7 @@ export default function ScreenClient({
       <div className="pointer-events-none absolute inset-0">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/rainforest-graph-bg.png')" }}
+          style={{ backgroundImage: "url('/images/rainforest-graph-bg.jpg')" }}
         />
         <div className="absolute inset-0 bg-[#06110D]/70" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(6,17,13,0.18),rgba(6,17,13,0.9)_72%)]" />
@@ -161,6 +163,23 @@ export default function ScreenClient({
           {attendees.length}
         </div>
       </div>
+
+      {joinQr && (
+        <div className="absolute right-10 bottom-10 z-10 flex flex-col items-center gap-3 rounded-3xl border border-[#ABD3B6]/15 bg-[#0F241A]/80 p-4 shadow-[0_0_45px_-12px_rgba(124,255,138,0.9)] backdrop-blur-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={joinQr}
+            alt={`QR to join ${event.name}`}
+            className="size-36 rounded-2xl bg-white p-2"
+          />
+          <div className="text-center">
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7CFF8A]/90">
+              Join the graph
+            </div>
+            <div className="mt-1 text-xs text-[#9BB7A3]">Scan to appear live</div>
+          </div>
+        </div>
+      )}
 
       {attendees.length === 0 && (
         <div className="absolute inset-0 z-10 flex items-center justify-center">

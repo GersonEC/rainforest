@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import QRCode from "qrcode";
 import { Plus, UserRound } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
@@ -59,7 +58,6 @@ export default function EventClient({
   const [ownId, setOwnId] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>({ role: null, tag: null });
   const [newNodeIds, setNewNodeIds] = useState<Set<string>>(new Set());
-  const [qr, setQr] = useState<string | null>(null);
   const entranceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -146,17 +144,6 @@ export default function EventClient({
     };
   }, []);
 
-  useEffect(() => {
-    const joinUrl = `${window.location.origin}/e/${event.slug}`;
-    QRCode.toDataURL(joinUrl, {
-      width: 220,
-      margin: 1,
-      color: { dark: "#06110D", light: "#ffffff" },
-    })
-      .then(setQr)
-      .catch(() => setQr(null));
-  }, [event.slug]);
-
   const filtered = useMemo(() => {
     return attendees.filter((a) => {
       if (filter.role && a.role !== filter.role) return false;
@@ -223,20 +210,6 @@ export default function EventClient({
           </div>
         )}
       </main>
-
-      {qr && (
-        <div className="absolute right-4 bottom-20 z-10 hidden flex-col items-center gap-2 rounded-2xl border border-[#ABD3B6]/15 bg-[#0F241A]/75 p-3 shadow-[0_0_35px_-10px_rgba(124,255,138,0.8)] backdrop-blur-md sm:flex">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={qr}
-            alt={`QR to join ${event.name}`}
-            className="size-24 rounded-lg bg-white p-1"
-          />
-          <span className="text-center text-[11px] font-medium uppercase tracking-wide text-[#7CFF8A]/80">
-            Join the graph
-          </span>
-        </div>
-      )}
 
       {/* Bottom CTA */}
       <footer className="relative z-10 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
@@ -335,7 +308,7 @@ function RainforestBackground() {
     <div className="pointer-events-none absolute inset-0 z-0">
       <div
         className="absolute inset-0 bg-cover bg-center opacity-22 saturate-125"
-        style={{ backgroundImage: "url('/images/rainforest-graph-bg.png')" }}
+        style={{ backgroundImage: "url('/images/rainforest-graph-bg.jpg')" }}
       />
       <div className="absolute inset-0 bg-[#06110D]/72" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(6,17,13,0.25),rgba(6,17,13,0.92)_70%)]" />
