@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Event Networking Graph",
   description:
-    "Scansiona, entra nel grafo e scopri chi cerca cosa — in tempo reale, sul tuo telefono e sul grande schermo.",
+    "Scan, join the graph, and discover who is looking for what — in real time, on your phone and on the big screen.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="it"
+      lang="en"
       className={`${spaceGrotesk.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

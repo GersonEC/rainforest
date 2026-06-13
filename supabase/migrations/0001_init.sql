@@ -34,7 +34,7 @@ create table if not exists public.attendees (
   name text not null,
   photo_url text,                -- Supabase Storage; user-provided photo only
   building text,
-  looking_for text,              -- "cosa cerco" — key field to measure
+  looking_for text,              -- "what are you looking for" — key field to measure
   contact text,
   role text,                     -- enum-like: Founder | Builder | Investor | Curious
   tags text[] default '{}',

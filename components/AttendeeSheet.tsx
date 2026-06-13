@@ -71,13 +71,13 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
       )}
 
       {attendee.building && (
-        <Field label="Sta costruendo">{attendee.building}</Field>
+        <Field label="Building">{attendee.building}</Field>
       )}
       {attendee.looking_for && (
-        <Field label="Cerca">{attendee.looking_for}</Field>
+        <Field label="Looking for">{attendee.looking_for}</Field>
       )}
       {attendee.contact && (
-        <Field label="Contatto">
+        <Field label="Contact">
           {href ? (
             <a
               href={href}
@@ -101,7 +101,7 @@ export default function AttendeeSheet({ attendee, isOwn, onEdit }: AttendeeSheet
           className="mt-1 w-full border-white/15 bg-white/5 text-white hover:bg-white/10"
         >
           <Pencil className="size-4" />
-          Modifica la tua scheda
+          Edit your profile
         </Button>
       )}
     </div>

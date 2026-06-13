@@ -3,8 +3,8 @@
 Mobile-first, no-login web app for events. Attendees scan a QR, fill a short
 self-declared card (with a self-service photo), and appear in real time as nodes in a
 force-directed graph — visible both on their phone and on the projector screen. The one
-hypothesis this MVP validates: **how many people actually fill the "cosa cerco stasera"
-field.**
+hypothesis this MVP validates: **how many people actually fill the "what are you looking
+for tonight?" field.**
 
 ## Stack
 
@@ -20,7 +20,7 @@ field.**
 | `/` | Landing → link to host |
 | `/host` | Create an event, get QR + projector link, moderate cards |
 | `/e/[slug]` | Participant phone view: live graph + join form + tap-to-open card |
-| `/e/[slug]/screen` | Read-only projector view: fullscreen graph, `PERSONE LIVE · N`, entrance spotlight |
+| `/e/[slug]/screen` | Read-only projector view: fullscreen graph, `LIVE PEOPLE · N`, entrance spotlight |
 
 ## Setup
 

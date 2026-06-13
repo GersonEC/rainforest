@@ -12,10 +12,10 @@ export const INTEREST_TAGS = [
   "Growth",
   "Hardware",
   "Web3",
-  "Cerco cofounder",
-  "Cerco lavoro",
-  "Assumo",
-  "Cerco utenti/feedback",
+  "Looking for cofounder",
+  "Looking for work",
+  "Hiring",
+  "Looking for users/feedback",
 ] as const;
 export type InterestTag = (typeof INTEREST_TAGS)[number];
 

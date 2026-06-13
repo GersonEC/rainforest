@@ -82,10 +82,10 @@ function parseForm(formData: FormData): ParsedForm {
 export async function joinEvent(formData: FormData): Promise<JoinResult> {
   const f = parseForm(formData);
 
-  if (!f.eventId || !f.sessionToken) return { ok: false, error: "Sessione non valida." };
-  if (!f.name) return { ok: false, error: "Il nome è obbligatorio." };
-  if (!f.consent) return { ok: false, error: "Il consenso è obbligatorio." };
-  if (f.role && !isValidRole(f.role)) return { ok: false, error: "Ruolo non valido." };
+  if (!f.eventId || !f.sessionToken) return { ok: false, error: "Invalid session." };
+  if (!f.name) return { ok: false, error: "Name is required." };
+  if (!f.consent) return { ok: false, error: "Consent is required." };
+  if (f.role && !isValidRole(f.role)) return { ok: false, error: "Invalid role." };
 
   const admin = getAdminClient();
 
@@ -108,7 +108,7 @@ export async function joinEvent(formData: FormData): Promise<JoinResult> {
     .select(ATTENDEE_COLUMNS)
     .single();
 
-  if (error || !data) return { ok: false, error: "Iscrizione fallita. Riprova." };
+  if (error || !data) return { ok: false, error: "Could not join. Try again." };
   return { ok: true, attendee: data as unknown as Attendee };
 }
 
@@ -116,9 +116,9 @@ export async function joinEvent(formData: FormData): Promise<JoinResult> {
 export async function updateOwnAttendee(formData: FormData): Promise<JoinResult> {
   const f = parseForm(formData);
 
-  if (!f.eventId || !f.sessionToken) return { ok: false, error: "Sessione non valida." };
-  if (!f.name) return { ok: false, error: "Il nome è obbligatorio." };
-  if (f.role && !isValidRole(f.role)) return { ok: false, error: "Ruolo non valido." };
+  if (!f.eventId || !f.sessionToken) return { ok: false, error: "Invalid session." };
+  if (!f.name) return { ok: false, error: "Name is required." };
+  if (f.role && !isValidRole(f.role)) return { ok: false, error: "Invalid role." };
 
   const admin = getAdminClient();
 
@@ -146,6 +146,6 @@ export async function updateOwnAttendee(formData: FormData): Promise<JoinResult>
     .select(ATTENDEE_COLUMNS)
     .maybeSingle();
 
-  if (error || !data) return { ok: false, error: "Aggiornamento fallito." };
+  if (error || !data) return { ok: false, error: "Update failed." };
   return { ok: true, attendee: data as unknown as Attendee };
 }

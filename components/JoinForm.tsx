@@ -15,7 +15,7 @@ import type { Attendee } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const CONSENT_TEXT =
-  "Compilando, accetti che la tua scheda sia visibile agli altri partecipanti di questo evento. I dati vengono cancellati 48 ore dopo l'evento.";
+  "By submitting, you agree that your profile will be visible to other participants at this event. Your data will be deleted 48 hours after the event.";
 
 type JoinFormProps = {
   eventId: string;
@@ -41,7 +41,7 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
     setTags((prev) => {
       if (prev.includes(tag)) return prev.filter((t) => t !== tag);
       if (prev.length >= MAX_TAGS) {
-        toast.warning(`Massimo ${MAX_TAGS} tag.`);
+        toast.warning(`Maximum ${MAX_TAGS} tags.`);
         return prev;
       }
       return [...prev, tag];
@@ -57,11 +57,11 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
 
   function submit() {
     if (!name.trim()) {
-      toast.error("Il nome è obbligatorio.");
+      toast.error("Name is required.");
       return;
     }
     if (mode === "join" && !consent) {
-      toast.error("Devi accettare il consenso per entrare.");
+      toast.error("You need to accept the consent notice to join.");
       return;
     }
 
@@ -80,7 +80,7 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
     startTransition(async () => {
       const res = mode === "join" ? await joinEvent(fd) : await updateOwnAttendee(fd);
       if (res.ok) {
-        toast.success(mode === "join" ? "Sei nel grafo!" : "Scheda aggiornata.");
+        toast.success(mode === "join" ? "You're in the graph!" : "Profile updated.");
         onDone(res.attendee);
       } else {
         toast.error(res.error);
@@ -99,7 +99,7 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
         >
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="Anteprima" className="size-full object-cover" />
+            <img src={preview} alt="Preview" className="size-full object-cover" />
           ) : (
             <Camera className="size-7" />
           )}
@@ -112,57 +112,57 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
           className="hidden"
           onChange={onPickPhoto}
         />
-        <span className="text-xs text-white/40">Scatta un selfie o carica una foto</span>
+        <span className="text-xs text-white/40">Take a selfie or upload a photo</span>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="name">Chi sei</Label>
+        <Label htmlFor="name">Who are you?</Label>
         <Input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Il tuo nome"
+          placeholder="Your name"
           maxLength={80}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="building">Cosa stai costruendo</Label>
+        <Label htmlFor="building">What are you building?</Label>
         <Textarea
           id="building"
           value={building}
           onChange={(e) => setBuilding(e.target.value)}
-          placeholder="Un'app, un fondo, una community…"
+          placeholder="An app, a fund, a community..."
           rows={2}
           maxLength={280}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="looking_for">Cosa cerchi stasera</Label>
+        <Label htmlFor="looking_for">What are you looking for tonight?</Label>
         <Textarea
           id="looking_for"
           value={lookingFor}
           onChange={(e) => setLookingFor(e.target.value)}
-          placeholder="Un cofounder, clienti, un lavoro, feedback…"
+          placeholder="A cofounder, customers, a job, feedback..."
           rows={2}
           maxLength={280}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="contact">Come ti contatto</Label>
+        <Label htmlFor="contact">How can people contact you?</Label>
         <Input
           id="contact"
           value={contact}
           onChange={(e) => setContact(e.target.value)}
-          placeholder="LinkedIn, sito, email, handle…"
+          placeholder="LinkedIn, website, email, handle..."
           maxLength={200}
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Ruolo</Label>
+        <Label>Role</Label>
         <div className="flex flex-wrap gap-2">
           {ROLES.map((r) => {
             const active = role === r;
@@ -188,7 +188,7 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
 
       <div className="flex flex-col gap-2">
         <Label>
-          Interessi <span className="text-white/40">(max {MAX_TAGS})</span>
+          Interests <span className="text-white/40">(max {MAX_TAGS})</span>
         </Label>
         <div className="flex flex-wrap gap-2">
           {INTEREST_TAGS.map((tag) => {
@@ -229,7 +229,7 @@ export default function JoinForm({ eventId, mode, initial, onDone }: JoinFormPro
         className="h-12 w-full bg-cyan-400 text-base font-semibold text-black hover:bg-cyan-300"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
-        {mode === "join" ? "Entra nel grafo" : "Salva modifiche"}
+        {mode === "join" ? "Join the graph" : "Save changes"}
       </Button>
     </div>
   );

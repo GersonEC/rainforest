@@ -148,7 +148,7 @@ export default function ScreenClient({
       {/* Live counter */}
       <div className="absolute right-10 top-8 z-10 text-right">
         <div className="text-sm font-medium uppercase tracking-[0.3em] text-cyan-300/80">
-          Persone Live
+          Live People
         </div>
         <div className="text-7xl font-bold leading-none text-white tabular-nums [text-shadow:0_0_40px_rgba(0,229,255,0.55)]">
           {attendees.length}
@@ -157,7 +157,7 @@ export default function ScreenClient({
 
       {attendees.length === 0 && (
         <div className="absolute inset-0 z-10 flex items-center justify-center">
-          <p className="text-xl text-white/40">In attesa dei primi partecipanti…</p>
+          <p className="text-xl text-white/40">Waiting for the first participants...</p>
         </div>
       )}
 
@@ -190,12 +190,12 @@ export default function ScreenClient({
           </div>
           <div>
             <div className="text-xs uppercase tracking-widest" style={{ color: spotlightColor }}>
-              È appena entrato
+              Just joined
             </div>
             <div className="text-xl font-semibold text-white">{spotlight.name}</div>
             {spotlight.looking_for && (
               <div className="max-w-md truncate text-sm text-white/60">
-                Cerca: {spotlight.looking_for}
+                Looking for: {spotlight.looking_for}
               </div>
             )}
           </div>

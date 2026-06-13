@@ -14,10 +14,10 @@ export async function createEvent(
   eventDate: string | null,
 ): Promise<CreateEventResult> {
   const trimmed = (name ?? "").trim();
-  if (!trimmed) return { ok: false, error: "Il nome dell'evento è obbligatorio." };
+  if (!trimmed) return { ok: false, error: "Event name is required." };
 
   const admin = getAdminClient();
-  const base = slugify(trimmed) || "evento";
+  const base = slugify(trimmed) || "event";
   const host_token = crypto.randomUUID();
 
   // Try a few slug candidates to avoid unique collisions.
@@ -37,11 +37,11 @@ export async function createEvent(
     }
     // 23505 = unique_violation -> retry with a new suffix
     if ((error as { code?: string }).code !== "23505") {
-      return { ok: false, error: "Impossibile creare l'evento. Riprova." };
+      return { ok: false, error: "Could not create the event. Try again." };
     }
   }
 
-  return { ok: false, error: "Slug non disponibile. Riprova." };
+  return { ok: false, error: "Slug unavailable. Try again." };
 }
 
 export type ModerationResult = { ok: true } | { ok: false; error: string };
@@ -61,9 +61,9 @@ export async function moderateAttendee(
     .eq("slug", slug)
     .maybeSingle();
 
-  if (eventErr || !event) return { ok: false, error: "Evento non trovato." };
+  if (eventErr || !event) return { ok: false, error: "Event not found." };
   if (!hostToken || event.host_token !== hostToken) {
-    return { ok: false, error: "Non autorizzato." };
+    return { ok: false, error: "Not authorized." };
   }
 
   if (action === "delete") {
@@ -72,14 +72,14 @@ export async function moderateAttendee(
       .delete()
       .eq("id", attendeeId)
       .eq("event_id", event.id);
-    if (error) return { ok: false, error: "Eliminazione fallita." };
+    if (error) return { ok: false, error: "Delete failed." };
   } else {
     const { error } = await admin
       .from("attendees")
       .update({ hidden: true })
       .eq("id", attendeeId)
       .eq("event_id", event.id);
-    if (error) return { ok: false, error: "Operazione fallita." };
+    if (error) return { ok: false, error: "Operation failed." };
   }
 
   return { ok: true };
@@ -104,9 +104,9 @@ export async function listAttendeesForHost(
     .eq("slug", slug)
     .maybeSingle();
 
-  if (eventErr || !event) return { ok: false, error: "Evento non trovato." };
+  if (eventErr || !event) return { ok: false, error: "Event not found." };
   if (!hostToken || event.host_token !== hostToken) {
-    return { ok: false, error: "Non autorizzato." };
+    return { ok: false, error: "Not authorized." };
   }
 
   const { data, error } = await admin
@@ -117,6 +117,6 @@ export async function listAttendeesForHost(
     .eq("event_id", event.id)
     .order("created_at", { ascending: true });
 
-  if (error || !data) return { ok: false, error: "Lettura fallita." };
+  if (error || !data) return { ok: false, error: "Could not load attendees." };
   return { ok: true, attendees: data as unknown as HostAttendee[] };
 }

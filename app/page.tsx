@@ -14,17 +14,17 @@ export default function Home() {
           <Share2 className="size-7" />
         </div>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Trasforma la sala in un grafo vivo
+          Turn the room into a living graph
         </h1>
         <p className="max-w-md text-lg text-white/60">
-          I partecipanti scansionano un QR, dicono cosa cercano e appaiono in tempo reale
-          come nodi luminosi. La rete cresce sotto gli occhi di tutti.
+          Participants scan a QR code, share what they are looking for, and appear in
+          real time as glowing nodes. The network grows in front of everyone.
         </p>
         <Link
           href="/host"
           className="inline-flex h-12 items-center gap-2 rounded-full bg-cyan-400 px-7 text-base font-semibold text-black shadow-[0_0_40px_-8px_rgba(0,229,255,0.9)] transition-colors hover:bg-cyan-300"
         >
-          Crea il tuo evento
+          Create your event
           <ArrowRight className="size-5" />
         </Link>
       </main>

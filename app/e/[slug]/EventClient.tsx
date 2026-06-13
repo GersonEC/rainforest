@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import QRCode from "qrcode";
 import { Plus, UserRound } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ export default function EventClient({
   const [ownId, setOwnId] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>({ role: null, tag: null });
   const [newNodeIds, setNewNodeIds] = useState<Set<string>>(new Set());
+  const [qr, setQr] = useState<string | null>(null);
   const entranceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -144,6 +146,17 @@ export default function EventClient({
     };
   }, []);
 
+  useEffect(() => {
+    const joinUrl = `${window.location.origin}/e/${event.slug}`;
+    QRCode.toDataURL(joinUrl, {
+      width: 220,
+      margin: 1,
+      color: { dark: "#05070d", light: "#ffffff" },
+    })
+      .then(setQr)
+      .catch(() => setQr(null));
+  }, [event.slug]);
+
   const filtered = useMemo(() => {
     return attendees.filter((a) => {
       if (filter.role && a.role !== filter.role) return false;
@@ -185,7 +198,7 @@ export default function EventClient({
           <div className="min-w-0">
             <h1 className="truncate text-base font-semibold">{event.name}</h1>
             <p className="text-xs text-cyan-300/80">
-              PERSONE LIVE · {attendees.length}
+              LIVE PEOPLE · {attendees.length}
             </p>
           </div>
         </div>
@@ -205,11 +218,25 @@ export default function EventClient({
         {attendees.length === 0 && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
             <p className="text-sm text-white/40">
-              Ancora nessuno nel grafo. Sii il primo a entrare.
+              No one is in the graph yet. Be the first to join.
             </p>
           </div>
         )}
       </main>
+
+      {qr && (
+        <div className="absolute right-4 bottom-20 z-10 hidden flex-col items-center gap-2 rounded-2xl border border-white/10 bg-black/45 p-3 shadow-[0_0_35px_-10px_rgba(0,229,255,0.8)] backdrop-blur-md sm:flex">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={qr}
+            alt={`QR to join ${event.name}`}
+            className="size-24 rounded-lg bg-white p-1"
+          />
+          <span className="text-center text-[11px] font-medium uppercase tracking-wide text-cyan-300/80">
+            Join the graph
+          </span>
+        </div>
+      )}
 
       {/* Bottom CTA */}
       <footer className="relative z-10 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
@@ -219,7 +246,7 @@ export default function EventClient({
             className="h-13 w-full border border-white/15 bg-white/5 text-base font-semibold text-white hover:bg-white/10"
           >
             <UserRound className="size-5" />
-            La tua scheda
+            Your profile
           </Button>
         ) : (
           <Button
@@ -227,7 +254,7 @@ export default function EventClient({
             className="h-13 w-full bg-cyan-400 text-base font-semibold text-black shadow-[0_0_30px_-6px_rgba(0,229,255,0.8)] hover:bg-cyan-300"
           >
             <Plus className="size-5" />
-            Entra nel grafo
+            Join the graph
           </Button>
         )}
       </footer>
@@ -242,8 +269,8 @@ export default function EventClient({
           className="max-h-[92dvh] overflow-y-auto border-white/10 bg-[#0a0e18] text-white"
         >
           <SheetHeader>
-            <SheetTitle className="text-white">Entra nel grafo</SheetTitle>
-            <SheetDescription>Compila la tua scheda. Appari subito nel grafo.</SheetDescription>
+            <SheetTitle className="text-white">Join the graph</SheetTitle>
+            <SheetDescription>Fill out your profile. You will appear in the graph right away.</SheetDescription>
           </SheetHeader>
           <div className="px-4 pb-6">
             <JoinForm eventId={event.id} mode="join" onDone={handleJoined} />
@@ -261,7 +288,7 @@ export default function EventClient({
           className="max-h-[92dvh] overflow-y-auto border-white/10 bg-[#0a0e18] text-white"
         >
           <SheetHeader>
-            <SheetTitle className="text-white">Modifica la tua scheda</SheetTitle>
+            <SheetTitle className="text-white">Edit your profile</SheetTitle>
           </SheetHeader>
           <div className="px-4 pb-6">
             {ownAttendee && (
@@ -286,7 +313,7 @@ export default function EventClient({
           className="max-h-[85dvh] overflow-y-auto border-white/10 bg-[#0a0e18] text-white"
         >
           <SheetHeader>
-            <SheetTitle className="sr-only">Scheda partecipante</SheetTitle>
+            <SheetTitle className="sr-only">Participant profile</SheetTitle>
           </SheetHeader>
           {selectedAttendee && (
             <AttendeeSheet
